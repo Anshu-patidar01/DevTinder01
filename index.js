@@ -2,10 +2,11 @@ const express = require("express");
 const connectDB = require("./src/config/database.js");
 const router = require("./src/routes/user.route.js");
 const app = express();
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const port = process.env.PORT;
 app.use(express.json());
-
+app.use(cookieParser());
 app.use("/api/user", router);
 
 connectDB()

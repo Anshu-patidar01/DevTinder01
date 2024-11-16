@@ -1,10 +1,13 @@
 const expres = require("express");
 const User = require("../models/user.model.js");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 const {
   signupValidation,
   loginValidation,
 } = require("../../utils/validationOrg.js");
 const bcrypt = require("bcrypt");
+expres().use(cookieParser());
 
 const signup = async (req, res) => {
   try {
@@ -34,6 +37,10 @@ const login = async (req, res) => {
 
     const ispassword = await bcrypt.compare(password, user.password);
     if (ispassword) {
+      const token = await jwt.sign({ _id: user._id }, "asdfghjkl", {
+        expiresIn: "1h",
+      });
+      res.cookie("token", token);
       res.status(200).send("login successfully....");
     } else {
       throw new Error("The email or password you entered is incorrect..");
@@ -41,6 +48,18 @@ const login = async (req, res) => {
   } catch (err) {
     res.status(400).json({
       message: "some error Occure while login user...",
+      error: `${err}`,
+    });
+  }
+};
+
+const profile = async (req, res) => {
+  try {
+    const user = req.user;
+    res.send(user);
+  } catch (err) {
+    res.status(400).json({
+      message: "some error Occure while access profile user...",
       error: `${err}`,
     });
   }
@@ -63,6 +82,17 @@ const findbyid = async (req, res) => {
     res.status(200).send(user);
   } catch (error) {
     res.status(404).send("something went wrong....");
+  }
+};
+
+const sendrequest = (req, res) => {
+  try {
+    const user = req.user;
+    const { firstName } = user;
+
+    res.send("request sent by " + firstName);
+  } catch (error) {
+    res.send(error);
   }
 };
 
@@ -124,4 +154,6 @@ module.exports = {
   deletebyid,
   update,
   updatebyemail,
+  profile,
+  sendrequest,
 };
