@@ -23,7 +23,7 @@ const signup = async (req, res) => {
       error: `${err}`,
     });
   }
-};
+}; 
 
 const login = async (req, res) => {
   try {

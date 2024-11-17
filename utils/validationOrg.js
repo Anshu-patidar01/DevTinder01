@@ -1,6 +1,7 @@
 const { Error } = require("mongoose");
 const validator = require("validator");
 
+//signUp validation
 const signupValidation = (req) => {
   const { firstName, lastName, email, password, skills, age, gender } =
     req.body;
@@ -11,6 +12,9 @@ const signupValidation = (req) => {
       "Please enter a valid name using only letters, hyphens, spaces, and apostrophes."
     );
   }
+
+  // if (!firstName || !email || !password)
+  //   throw new Error("FirstName, email and password are compulsory...!");
 
   //Validation for email address
   if (!validator.isEmail(email)) {
@@ -46,12 +50,14 @@ const signupValidation = (req) => {
   }
 };
 
+//login validation
 const loginValidation = (req) => {
   if (!validator.isEmail(req.body.email)) {
     throw new Error("Please Enter valid Email address...");
   }
 };
 
+//profile validation
 const profileUpdateDataValidation = (req) => {
   const allowedKeys = ["fistName", "lastName", "email", "skills", "gender"];
 
@@ -63,8 +69,33 @@ const profileUpdateDataValidation = (req) => {
   }
 };
 
+// password validation
+const passwordUpdateValidation = (req) => {
+  const allowedData = ["newPassword", "confirmPassword", "oldPassword"];
+  const { newPassword, oldPassword, confirmPassword } = req.body;
+  if (!newPassword || !oldPassword || !confirmPassword) {
+    throw new Error("Please provide all the fields...!");
+  }
+
+  const isStrongPassword = validator.isStrongPassword(newPassword);
+  if (!isStrongPassword) {
+    throw new Error("please enter Strong passsword!!");
+  }
+
+  if (oldPassword == newPassword)
+    throw new Error("Your old and new password is Same...!");
+
+  const isAllowed = Object.keys(req.body).every((field) =>
+    allowedData.includes(field)
+  );
+  if (!isAllowed) throw new Error("Update password is not allowed....!");
+  if (req.body.newPassword != req.body.confirmPassword)
+    throw new Error("password does not Match to confirm Password...!");
+};
+
 module.exports = {
   signupValidation,
   loginValidation,
   profileUpdateDataValidation,
+  passwordUpdateValidation,
 };

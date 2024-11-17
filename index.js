@@ -3,7 +3,7 @@ const connectDB = require("./src/config/database.js");
 const authRouter = require("./src/routes/auth.route.js");
 const requestRouter = require("./src/routes/request.route.js");
 const profileRouter = require("./src/routes/profile.route.js");
-
+const password = require("./src/routes/password.rout.js");
 const app = express();
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
@@ -14,7 +14,7 @@ app.use(cookieParser());
 app.use("/", authRouter);
 app.use("/", requestRouter);
 app.use("/", profileRouter);
-
+app.use("/", password);
 connectDB()
   .then(() => {
     app.listen(port || 5000, () => {
