@@ -1,4 +1,6 @@
+const { Error } = require("mongoose");
 const validator = require("validator");
+
 const signupValidation = (req) => {
   const { firstName, lastName, email, password, skills, age, gender } =
     req.body;
@@ -43,9 +45,26 @@ const signupValidation = (req) => {
     throw new Error("please enter valid gender 'male' , 'female' or 'other'.");
   }
 };
+
 const loginValidation = (req) => {
   if (!validator.isEmail(req.body.email)) {
     throw new Error("Please Enter valid Email address...");
   }
 };
-module.exports = { signupValidation, loginValidation };
+
+const profileUpdateDataValidation = (req) => {
+  const allowedKeys = ["fistName", "lastName", "email", "skills", "gender"];
+
+  const isAllowed = Object.keys(req.body).every((field) =>
+    allowedKeys.includes(field)
+  );
+  if (!isAllowed) {
+    throw new Error("Edit not Allowed...!");
+  }
+};
+
+module.exports = {
+  signupValidation,
+  loginValidation,
+  profileUpdateDataValidation,
+};
